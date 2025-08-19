@@ -289,7 +289,7 @@
     @keyframes dmjspin { to { transform: rotate(360deg); } }
   </style>
   <script>
-    const DMJ_API_BASE = "https://YOUR-RAILWAY-BACKEND.example.com".replace(/\/$/, "");
+    const DMJ_API_BASE = "https://dearmaryj-backend-production.up.railway.app".replace(/\/$/, "");
     async function dmjAuthStatus() {
       try {
         const r = await fetch(DMJ_API_BASE + "/api/auth/status", { credentials: "include" });
