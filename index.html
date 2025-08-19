@@ -62,26 +62,11 @@
       box-shadow: var(--shadow);
       margin-bottom: 16px;
     }
-    .brandbar .brand-left {
-      display: flex; align-items: center; gap: 16px;
-      min-width: 0;
-    }
-    .brand-logo {
-      display: block;
-      height: 100px;
-      width: auto;
-      border-radius: 10px;
-    }
-    .brand-title {
-      display: flex; flex-direction: column; min-width: 0;
-    }
-    .brand-title .name {
-      font-weight: 800; letter-spacing: -0.02em; font-size: 22px; line-height: 1.1;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .brand-title .domain {
-      color: var(--muted); font-weight: 600; font-size: 13px;
-    }
+    .brandbar .brand-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+    .brand-logo { display: block; height: 100px; width: auto; border-radius: 10px; }
+    .brand-title { display: flex; flex-direction: column; min-width: 0; }
+    .brand-title .name { font-weight: 800; letter-spacing: -0.02em; font-size: 22px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-title .domain { color: var(--muted); font-weight: 600; font-size: 13px; }
     .brand-tag {
       display: inline-flex; align-items: center; gap:8px;
       background: rgba(43,213,118,.10);
@@ -103,7 +88,6 @@
       padding: 24px 24px 18px;
       backdrop-filter: blur(6px);
     }
-
     .hero h1{
       letter-spacing: -0.02em;
       font-weight: 800;
@@ -111,7 +95,6 @@
       margin: 0 0 6px;
       display: flex; align-items: center; gap:12px;
     }
-
     .hero-badge {
       display: inline-flex; align-items: center; gap:8px;
       background: rgba(43,213,118,.10);
@@ -123,11 +106,7 @@
       font-size: 12px;
       line-height: 1;
     }
-
-    .subtle {
-      color: var(--muted);
-      margin: 10px 0 0;
-    }
+    .subtle { color: var(--muted); margin: 10px 0 0; }
 
     .panel {
       background: linear-gradient(180deg, var(--panel), var(--panel-2));
@@ -135,22 +114,14 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-
     .panel-header {
       padding: 18px 20px 14px;
       border-bottom: 1px solid var(--stroke);
       display: flex; align-items: center; justify-content: space-between; gap:12px;
       flex-wrap: wrap;
     }
-    .panel-header h4{
-      margin: 0;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .panel-body {
-      padding: 18px 20px;
-    }
+    .panel-header h4{ margin: 0; font-weight: 700; letter-spacing: -0.01em; }
+    .panel-body { padding: 18px 20px; }
 
     /* Inputs */
     .form-label { color: var(--muted); font-weight: 600; }
@@ -164,8 +135,7 @@
     .form-control:focus, .form-select:focus, textarea.form-control:focus {
       border-color: rgba(43,213,118,.6);
       box-shadow: 0 0 0 4px rgba(43,213,118,.15);
-      background: #0e1310;
-      color: var(--text);
+      background: #0e1310; color: var(--text);
     }
 
     /* Buttons */
@@ -179,88 +149,42 @@
       box-shadow: 0 8px 20px rgba(43,213,118,.25);
     }
     .btn-success:hover{ filter: brightness(1.05); }
-    .btn-outline-secondary{
-      color: var(--muted);
-      border-color: #253029;
-    }
-    .btn-outline-secondary:hover{
-      background: #152019; color: var(--text); border-color: #253029;
-    }
-    .btn-outline-danger{
-      border-color: #3a2426; color: #ffb4bd;
-    }
-    .btn-outline-danger:hover{
-      background: #2a1719; border-color:#3a2426; color: #ffd7dc;
-    }
+    .btn-outline-secondary{ color: var(--muted); border-color: #253029; }
+    .btn-outline-secondary:hover{ background: #152019; color: var(--text); border-color: #253029; }
+    .btn-outline-danger{ border-color: #3a2426; color: #ffb4bd; }
+    .btn-outline-danger:hover{ background: #2a1719; border-color:#3a2426; color: #ffd7dc; }
 
     /* Slider (exact fill) */
     .slider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      outline: none;
-      border: 1px solid #1b241f;
-      background-color: #1e2622; /* base track */
-      background-image: linear-gradient(90deg, var(--accent), var(--accent)); /* green overlay */
-      background-repeat: no-repeat;
-      background-size: 0% 100%; /* updated in JS */
+      -webkit-appearance: none; appearance: none; width: 100%; height: 10px; border-radius: 999px;
+      outline: none; border: 1px solid #1b241f; background-color: #1e2622;
+      background-image: linear-gradient(90deg, var(--accent), var(--accent));
+      background-repeat: no-repeat; background-size: 0% 100%;
     }
     .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px; height: 22px;
-      background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%),
-                  linear-gradient(180deg, #ffffff, #c7ffd9);
-      border-radius: 50%;
-      border: 2px solid var(--accent-700);
-      cursor: pointer;
+      -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+      background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%), linear-gradient(180deg, #ffffff, #c7ffd9);
+      border-radius: 50%; border: 2px solid var(--accent-700); cursor: pointer;
       box-shadow: 0 6px 14px rgba(43,213,118,.35), inset 0 0 0 2px rgba(255,255,255,.7);
     }
     .slider::-moz-range-thumb {
-      width: 22px; height: 22px;
-      background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%),
-                  linear-gradient(180deg, #ffffff, #c7ffd9);
-      border-radius: 50%;
-      border: 2px solid var(--accent-700);
-      cursor: pointer;
+      width: 22px; height: 22px; background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%), linear-gradient(180deg, #ffffff, #c7ffd9);
+      border-radius: 50%; border: 2px solid var(--accent-700); cursor: pointer;
       box-shadow: 0 6px 14px rgba(43,213,118,.35), inset 0 0 0 2px rgba(255,255,255,.7);
     }
     .form-text { color: var(--muted); }
 
     /* Leaf rating bar */
-    .leaf-rating {
-      position: relative;
-      display: inline-block;
-      width: 240px;  /* 10 leaves * 24px */
-      height: 24px;
-      background: url('assets/leaf-gray.svg') repeat-x;
-      background-size: 24px 24px;
-      vertical-align: middle;
-      margin-right: .5rem;
-      filter: drop-shadow(0 1px 0 rgba(0,0,0,.35));
-    }
-    .leaf-rating-full {
-      position: absolute; top: 0; left: 0;
-      height: 24px;
-      background: url('assets/leaf-green.svg') repeat-x;
-      background-size: 24px 24px;
-    }
+    .leaf-rating { position: relative; display: inline-block; width: 240px; height: 24px;
+      background: url('assets/leaf-gray.svg') repeat-x; background-size: 24px 24px;
+      vertical-align: middle; margin-right: .5rem; filter: drop-shadow(0 1px 0 rgba(0,0,0,.35)); }
+    .leaf-rating-full { position: absolute; top: 0; left: 0; height: 24px;
+      background: url('assets/leaf-green.svg') repeat-x; background-size: 24px 24px; }
     .mono { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 700; }
 
     /* Table */
-    .table {
-      --bs-table-bg: transparent;
-      --bs-table-color: var(--text);
-      --bs-table-border-color: var(--stroke);
-    }
-    thead.table-light {
-      color: var(--text);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
-      border-bottom: 1px solid var(--stroke);
-      user-select: none;
-    }
+    .table { --bs-table-bg: transparent; --bs-table-color: var(--text); --bs-table-border-color: var(--stroke); }
+    thead.table-light { color: var(--text); background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); border-bottom: 1px solid var(--stroke); user-select: none; }
     .sortable { cursor: pointer; position: relative; }
     .sortable .sort-indicator{ opacity:.65; margin-left:.35rem; font-size:.9em; }
     .table tbody tr{ transition: background .15s ease, transform .05s ease; }
@@ -270,15 +194,45 @@
     /* Search box */
     .search-wrap { width: 320px; max-width: 100%; }
     .search-wrap .form-control { padding-left: 40px; }
-    .search-icon {
-      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); pointer-events: none;
-    }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
 
     /* Footer */
-    .site-footer {
-      margin-top: 18px; color: var(--muted); font-size: 13px; text-align: center;
+    .site-footer { margin-top: 18px; color: var(--muted); font-size: 13px; text-align: center; }
+
+    /* --- PAYWALL overlay (additive, covers app until unlocked) --- */
+    #dmjPaywallOverlay {
+      position: fixed; inset: 0; z-index: 2147483647; display: none;
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, rgba(43,213,118,.12), transparent 60%),
+        radial-gradient(1000px 1000px at 110% 0%, rgba(43,213,118,.10), transparent 55%),
+        radial-gradient(1000px 1000px at 50% 120%, rgba(43,213,118,.08), transparent 60%),
+        var(--bg);
+      color: var(--text); backdrop-filter: blur(6px);
     }
+    #dmjPaywallCard {
+      max-width: 720px; margin: 8vh auto; padding: 28px;
+      border-radius: 16px; border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      box-shadow: var(--shadow);
+    }
+    .dmj-flex { display:flex; align-items:center; gap:14px; }
+    .dmj-title { font-weight:800; letter-spacing:-.02em; font-size: clamp(22px, 3.5vw, 34px); margin:0; }
+    .dmj-sub { color: var(--muted); margin: 6px 0 0; }
+    .dmj-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+    .dmj-btn {
+      display:inline-block; padding:10px 16px; border-radius:12px; font-weight:700; letter-spacing:.01em; text-decoration:none;
+      border:1px solid var(--accent-700); background: linear-gradient(180deg, var(--accent), var(--accent-600)); color: #05140c;
+      box-shadow: 0 8px 20px rgba(43,213,118,.25);
+    }
+    .dmj-btn:hover { filter: brightness(1.05); }
+    .dmj-ghost-btn {
+      display:inline-block; padding:10px 16px; border-radius:12px; text-decoration:none; color: var(--muted);
+      border:1px solid #253029; background: #0f1411;
+    }
+    .dmj-ghost-btn:hover { background:#152019; color: var(--text); }
+    .dmj-note { color: var(--muted); font-size: 13px; margin-top: 10px; text-align:center; }
+    .dmj-spinner { width: 26px; height: 26px; border: 3px solid rgba(255,255,255,.25); border-top-color: var(--accent); border-radius:50%; animation: dmjspin 1s linear infinite; }
+    @keyframes dmjspin { to { transform: rotate(360deg); } }
 
     @media (max-width: 768px){
       .leaf-rating { width: 180px; height: 18px; background-size: 18px 18px; }
@@ -290,13 +244,39 @@
 <body>
   <div class="app-shell">
 
+    <!-- PAYWALL OVERLAY (additive; blocks UI until unlocked) -->
+    <div id="dmjPaywallOverlay" role="dialog" aria-modal="true" aria-label="Unlock Dear Mary J">
+      <div id="dmjPaywallCard">
+        <div class="dmj-flex">
+          <img src="logos/logo-square.svg" alt="Dear Mary J" style="height:56px;width:56px;border-radius:12px;border:1px solid var(--stroke);background:var(--panel);padding:6px" onerror="this.style.display='none'">
+          <div>
+            <h2 class="dmj-title">Unlock Dear Mary J</h2>
+            <p class="dmj-sub">One-time access • $4.20 • Private, local-first journal</p>
+          </div>
+        </div>
+        <div class="dmj-actions" style="margin-top:16px">
+          <a class="dmj-btn" id="dmjUnlockBtn" href="#">Unlock Full Access — $4.20</a>
+          <a class="dmj-ghost-btn" id="dmjShowRestore" href="javascript:void(0)">Restore Purchase</a>
+          <span id="dmjPaywallSpinner" class="dmj-spinner" style="display:none"></span>
+        </div>
+        <div id="dmjRestoreWrap" style="display:none;margin-top:12px">
+          <label for="dmjRestoreEmail" class="dmj-sub" style="display:block;margin-bottom:6px">Enter your purchase email</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="dmjRestoreEmail" type="email" placeholder="you@example.com" style="flex:1;min-width:240px;padding:10px 12px;border-radius:12px;border:1px solid #1b241f;background:#0f1411;color:var(--text)">
+            <button id="dmjDoRestore" class="dmj-btn" type="button">Restore</button>
+          </div>
+          <div id="dmjRestoreMsg" class="dmj-note" style="margin-top:8px"></div>
+        </div>
+        <p class="dmj-note">After purchase you’ll be redirected back here and we’ll unlock the app automatically.</p>
+      </div>
+    </div>
+
     <!-- BRAND BAR -->
 
     <!-- HERO -->
     <section class="hero mb-4">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div class="brand-left">
-          <!-- Ensure logos folder exists: ./logos/logo-horizontal.svg -->
           <img class="brand-logo" src="logos/logo-horizontal.svg" alt="Dear Mary J logo" onerror="this.src='logos/logo-horizontal.png'; this.onerror=null;">
         </div>
         <div>
@@ -328,7 +308,6 @@
               <input type="text" id="inputCompany" class="form-control" placeholder="Where you bought it" />
             </div>
             <div class="col-md-3">
-              <!-- keep id/name and data binding the same -->
               <label for="inputMethod" class="form-label">Product <span class="text-danger">*</span></label>
               <select id="inputMethod" class="form-select" required>
                 <!-- Flower & Pre-rolls -->
@@ -449,9 +428,11 @@
   </div>
 
   <script>
+    const DMJ_API_BASE = "https://dearmaryj-backend-production.up.railway.app".replace(/\/$/, "");
     // year in footer (does not affect app logic)
     document.getElementById('y').textContent = new Date().getFullYear();
 
+    /* ---------- APP (existing) ---------- */
     let entries = [];
     let editingIndex = null;
 
@@ -655,6 +636,104 @@
       document.getElementById('submitBtn').textContent = "Add Entry";
       document.getElementById('cancelBtn').classList.add('d-none');
     }
+
+    /* ---------- PAYWALL (additive) ---------- */
+    async function dmjAuthStatus(){
+      try {
+        const r = await fetch(`${DMJ_API_BASE}/api/auth/status`, { credentials: 'include' });
+        if (!r.ok) return { unlocked: false };
+        return await r.json();
+      } catch { return { unlocked: false }; }
+    }
+    async function dmjValidateSession(sessionId){
+      try {
+        const r = await fetch(`${DMJ_API_BASE}/api/validate-session`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ session_id: sessionId })
+        });
+        if (!r.ok) return false;
+        const data = await r.json(); return !!data.unlocked;
+      } catch { return false; }
+    }
+
+    (function initPaywall(){
+      const params = new URLSearchParams(window.location.search);
+      const sid = params.get('session_id');
+
+      function showOverlay(on){
+        const ov = document.getElementById('dmjPaywallOverlay');
+        if (ov) ov.style.display = on ? 'block' : 'none';
+      }
+
+      // Bind buttons
+      document.addEventListener('DOMContentLoaded', () => {
+        const unlock = document.getElementById('dmjUnlockBtn');
+        if (unlock) unlock.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = `${DMJ_API_BASE}/api/pay`;
+        });
+
+        const showRestore = document.getElementById('dmjShowRestore');
+        const wrap = document.getElementById('dmjRestoreWrap');
+        const restoreBtn = document.getElementById('dmjDoRestore');
+        const emailInput = document.getElementById('dmjRestoreEmail');
+        const msg = document.getElementById('dmjRestoreMsg');
+
+        if (showRestore) showRestore.addEventListener('click', () => {
+          wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+          msg.textContent = '';
+        });
+        if (restoreBtn) restoreBtn.addEventListener('click', async () => {
+          msg.textContent = 'Checking…';
+          const email = (emailInput.value || '').trim();
+          if (!email) { msg.textContent = 'Please enter your email.'; return; }
+          try {
+            const r = await fetch(`${DMJ_API_BASE}/api/restore`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ email })
+            });
+            const data = await r.json();
+            if (r.ok && data.unlocked) {
+              msg.textContent = 'Restored — unlocking…';
+              showOverlay(false);
+            } else {
+              msg.textContent = (data && data.error) ? data.error : 'Not found for that email.';
+            }
+          } catch {
+            msg.textContent = 'Network error, try again.';
+          }
+        });
+      });
+
+      if (sid) {
+        // Show overlay while verifying
+        document.addEventListener('DOMContentLoaded', () => {
+          const spin = document.getElementById('dmjPaywallSpinner');
+          if (spin) spin.style.display = 'inline-block';
+          showOverlay(true);
+        });
+        (async () => {
+          const ok = await dmjValidateSession(sid);
+          if (ok) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('session_id');
+            window.history.replaceState(null, '', url.toString());
+            showOverlay(false);
+          } else {
+            showOverlay(true);
+          }
+        })();
+      } else {
+        document.addEventListener('DOMContentLoaded', async () => {
+          const st = await dmjAuthStatus();
+          showOverlay(!st.unlocked);
+        });
+      }
+    })();
   </script>
 </body>
 </html>
