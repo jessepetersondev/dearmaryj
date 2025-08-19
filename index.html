@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cannabis Journal — One Puff Rating</title>
+
+  <!-- Font & Bootstrap -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="brand/brand.css">
+  <link rel="icon" href="/icons/favicon.ico">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#2BD576">
+<meta property="og:image" content="https://dearmaryj.com/social/og-1200x630.png">
+<meta name="twitter:image" content="https://dearmaryj.com/social/twitter-1500x500.png">
+
+
+
+
+  <style>
+    :root{
+      --bg: #0b0f0d;
+      --panel: #101613;
+      --panel-2: #0f140f;
+      --text: #e7f3ec;
+      --muted: #a6b7af;
+      --accent: #2bd576;
+      --accent-600:#1fb562;
+      --accent-700:#139a53;
+      --stroke: #1b241f;
+      --shadow: 0 10px 30px rgba(0,0,0,.35), 0 6px 16px rgba(23, 46, 33, .25);
+      --radius: 16px;
+      --radius-sm: 12px;
+    }
+
+    html, body {
+      height: 100%;
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, rgba(43,213,118,.12), transparent 60%),
+        radial-gradient(1000px 1000px at 110% 0%, rgba(43,213,118,.10), transparent 55%),
+        radial-gradient(1000px 1000px at 50% 120%, rgba(43,213,118,.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    .app-shell {
+      max-width: 1100px;
+      margin: 56px auto;
+      padding: 0 20px;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(43,213,118,.18), rgba(43,213,118,0) 60%),
+        linear-gradient(0deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border: 1px solid var(--stroke);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      padding: 28px 28px 22px;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero h1{
+      letter-spacing: -0.02em;
+      font-weight: 800;
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 0 0 6px;
+      display: flex; align-items: center; gap:12px;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap:8px;
+      background: rgba(43,213,118,.10);
+      border: 1px solid rgba(43,213,118,.35);
+      color: var(--accent);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .subtle {
+      color: var(--muted);
+      margin: 10px 0 0;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--stroke);
+      display: flex; align-items: center; justify-content: space-between; gap:12px;
+      flex-wrap: wrap;
+    }
+    .panel-header h4{
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .panel-body {
+      padding: 18px 20px;
+    }
+
+    /* Inputs */
+    .form-label { color: var(--muted); font-weight: 600; }
+    .form-control, .form-select, textarea.form-control {
+      background: #0f1411;
+      border: 1px solid #1b241f;
+      color: var(--text);
+      border-radius: 12px;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .form-control:focus, .form-select:focus, textarea.form-control:focus {
+      border-color: rgba(43,213,118,.6);
+      box-shadow: 0 0 0 4px rgba(43,213,118,.15);
+      background: #0e1310;
+      color: var(--text);
+    }
+
+    /* Buttons */
+    .btn-success{
+      background: linear-gradient(180deg, var(--accent), var(--accent-600));
+      border: 1px solid var(--accent-700);
+      border-radius: 12px;
+      font-weight: 700;
+      letter-spacing: .01em;
+      padding: 10px 16px;
+      box-shadow: 0 8px 20px rgba(43,213,118,.25);
+    }
+    .btn-success:hover{ filter: brightness(1.05); }
+    .btn-outline-secondary{
+      color: var(--muted);
+      border-color: #253029;
+    }
+    .btn-outline-secondary:hover{
+      background: #152019; color: var(--text); border-color: #253029;
+    }
+    .btn-outline-danger{
+      border-color: #3a2426; color: #ffb4bd;
+    }
+    .btn-outline-danger:hover{
+      background: #2a1719; border-color:#3a2426; color: #ffd7dc;
+    }
+
+    /* Slider (exact fill) */
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      outline: none;
+      border: 1px solid #1b241f;
+      background-color: #1e2622; /* base track */
+      background-image: linear-gradient(90deg, var(--accent), var(--accent)); /* green overlay */
+      background-repeat: no-repeat;
+      background-size: 0% 100%; /* updated in JS */
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px; height: 22px;
+      background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%),
+                  linear-gradient(180deg, #ffffff, #c7ffd9);
+      border-radius: 50%;
+      border: 2px solid var(--accent-700);
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(43,213,118,.35), inset 0 0 0 2px rgba(255,255,255,.7);
+    }
+    .slider::-moz-range-thumb {
+      width: 22px; height: 22px;
+      background: radial-gradient(circle at 30% 30%, #eafff3 0 12%, transparent 13%),
+                  linear-gradient(180deg, #ffffff, #c7ffd9);
+      border-radius: 50%;
+      border: 2px solid var(--accent-700);
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(43,213,118,.35), inset 0 0 0 2px rgba(255,255,255,.7);
+    }
+    .form-text { color: var(--muted); }
+
+    /* Leaf rating bar */
+    .leaf-rating {
+      position: relative;
+      display: inline-block;
+      width: 240px;  /* 10 leaves * 24px */
+      height: 24px;
+      background: url('assets/leaf-gray.svg') repeat-x;
+      background-size: 24px 24px;
+      vertical-align: middle;
+      margin-right: .5rem;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.35));
+    }
+    .leaf-rating-full {
+      position: absolute; top: 0; left: 0;
+      height: 24px;
+      background: url('assets/leaf-green.svg') repeat-x;
+      background-size: 24px 24px;
+    }
+    .mono { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 700; }
+
+    /* Table */
+    .table {
+      --bs-table-bg: transparent;
+      --bs-table-color: var(--text);
+      --bs-table-border-color: var(--stroke);
+    }
+    thead.table-light {
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+      border-bottom: 1px solid var(--stroke);
+      user-select: none;
+    }
+    .sortable { cursor: pointer; position: relative; }
+    .sortable .sort-indicator{ opacity:.65; margin-left:.35rem; font-size:.9em; }
+    .table tbody tr{ transition: background .15s ease, transform .05s ease; }
+    .table tbody tr:hover{ background: rgba(43,213,118,.05); }
+    .table td, .table th{ border-color: var(--stroke) !important; }
+
+    /* Search box */
+    .search-wrap { width: 320px; max-width: 100%; }
+    .search-wrap .form-control { padding-left: 40px; }
+    .search-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none;
+    }
+
+    @media (max-width: 768px){
+      .leaf-rating { width: 180px; height: 18px; background-size: 18px 18px; }
+      .leaf-rating-full { height: 18px; background-size: 18px 18px; }
+    }
+  </style>
+
+  <!-- DMJ Paywall: Backend-auth overlay & helpers (non-destructive) -->
+  <style>
+    #dmjPaywallOverlay {
+      position: fixed; inset: 0; z-index: 2147483647;
+      display: none;
+      background:
+        radial-gradient(1200px 1200px at -10% -10%, rgba(43,213,118,.12), transparent 60%),
+        radial-gradient(1000px 1000px at 110% 0%, rgba(43,213,118,.10), transparent 55%),
+        radial-gradient(1000px 1000px at 50% 120%, rgba(43,213,118,.08), transparent 60%),
+        var(--bg, #0b0f0d);
+      color: var(--text, #e7f3ec);
+      backdrop-filter: blur(6px);
+    }
+    #dmjPaywallCard {
+      max-width: 720px; margin: 8vh auto; padding: 28px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke, #1b241f);
+      background: linear-gradient(180deg, var(--panel, #101613), var(--panel-2, #0f140f));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 6px 16px rgba(23,46,33,.25);
+    }
+    .dmj-flex { display:flex; align-items:center; gap:14px; }
+    .dmj-title { font-weight:800; letter-spacing:-.02em; font-size: clamp(22px, 3.5vw, 34px); margin:0; }
+    .dmj-sub { color: var(--muted, #a6b7af); margin: 6px 0 0; }
+    .dmj-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
+    .dmj-btn {
+      display:inline-block; padding:10px 16px; border-radius:12px;
+      font-weight:700; letter-spacing:.01em; text-decoration:none;
+      border:1px solid var(--accent-700, #139a53);
+      background: linear-gradient(180deg, var(--accent, #2bd576), var(--accent-600, #1fb562));
+      color: #05140c;
+      box-shadow: 0 8px 20px rgba(43,213,118,.25);
+    }
+    .dmj-btn:hover { filter: brightness(1.05); }
+    .dmj-ghost-btn {
+      display:inline-block; padding:10px 16px; border-radius:12px; text-decoration:none;
+      color: var(--muted, #a6b7af); border:1px solid #253029; background: #0f1411;
+    }
+    .dmj-ghost-btn:hover { background:#152019; color: var(--text,#e7f3ec); }
+    .dmj-note { color: var(--muted,#a6b7af); font-size: 13px; margin-top: 10px; }
+    .dmj-center { text-align:center; }
+    .dmj-spinner {
+      width: 26px; height: 26px; border: 3px solid rgba(255,255,255,.25);
+      border-top-color: var(--accent, #2bd576); border-radius:50%;
+      animation: dmjspin 1s linear infinite;
+    }
+    @keyframes dmjspin { to { transform: rotate(360deg); } }
+  </style>
+  <script>
+    const DMJ_API_BASE = "https://YOUR-RAILWAY-BACKEND.example.com".replace(/\/$/, "");
+    async function dmjAuthStatus() {
+      try {
+        const r = await fetch(DMJ_API_BASE + "/api/auth/status", { credentials: "include" });
+        if (!r.ok) return { unlocked: false };
+        return await r.json();
+      } catch (e) { return { unlocked: false }; }
+    }
+    async function dmjValidateSession(sessionId) {
+      try {
+        const r = await fetch(DMJ_API_BASE + "/api/validate-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ session_id: sessionId })
+        });
+        if (!r.ok) return false;
+        const data = await r.json();
+        return !!data.unlocked;
+      } catch (e) { return false; }
+    }
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const sid = params.get("session_id");
+      if (sid) {
+        window.addEventListener("DOMContentLoaded", () => {
+          const ov = document.getElementById("dmjPaywallOverlay");
+          if (ov) ov.style.display = "block";
+          const spin = document.getElementById("dmjPaywallSpinner");
+          if (spin) spin.style.display = "inline-block";
+        });
+        (async () => {
+          const ok = await dmjValidateSession(sid);
+          if (ok) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete("session_id");
+            window.history.replaceState(null, "", url.toString());
+            const ov = document.getElementById("dmjPaywallOverlay");
+            if (ov) ov.style.display = "none";
+          } else {
+            const ov = document.getElementById("dmjPaywallOverlay");
+            if (ov) ov.style.display = "block";
+          }
+        })();
+      } else {
+        window.addEventListener("DOMContentLoaded", async () => {
+          const st = await dmjAuthStatus();
+          const ov = document.getElementById("dmjPaywallOverlay");
+          if (!ov) return;
+          ov.style.display = st.unlocked ? "none" : "block";
+        });
+      }
+    })();
+  </script>
+
+</head>
+<body>
+
+  <!-- DMJ Paywall Overlay (non-destructive to existing UI) -->
+  <div id="dmjPaywallOverlay" role="dialog" aria-modal="true" aria-label="Unlock Dear Mary J">
+    <div id="dmjPaywallCard">
+      <div class="dmj-flex">
+        <img src="logos/logo-square.svg" alt="Dear Mary J" style="height:56px;width:56px;border-radius:12px;border:1px solid var(--stroke,#1b241f);background:var(--panel,#101613);padding:6px" onerror="this.style.display='none'">
+        <div>
+          <h2 class="dmj-title">Unlock Dear Mary J</h2>
+          <p class="dmj-sub">One-time access • $4.20 • Private, local-first journal</p>
+        </div>
+      </div>
+      <div class="dmj-actions" style="margin-top:16px">
+        <a class="dmj-btn" href="https://YOUR-RAILWAY-BACKEND.example.com/api/pay">Unlock Full Access — $4.20</a>
+        <a class="dmj-ghost-btn" href="mailto:support@dearmaryj.com?subject=Access%20Help">Need Help?</a>
+        <span id="dmjPaywallSpinner" class="dmj-spinner" style="display:none"></span>
+      </div>
+      <p class="dmj-note dmj-center">After purchase you will return here automatically. We’ll securely verify your payment and unlock the app.</p>
+    </div>
+  </div>
+
+  <div class="app-shell">
+
+    <!-- HERO -->
+    <section class="hero mb-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+          <h1>
+            <span class="hero-badge" aria-hidden="true">PRIVATE • LOCAL</span>
+            My Cannabis Journal
+          </h1>
+          <p class="subtle">
+            Track sessions privately (stored in your browser). Rate each session with the
+            <strong>One Puff Rating</strong> <span class="text-success">(1.0–10.0)</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM PANEL -->
+    <section class="panel mb-4">
+      <div class="panel-header">
+        <h4>Add a New Entry</h4>
+      </div>
+      <div class="panel-body">
+        <form id="entryForm" onsubmit="submitEntry(); return false;">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="inputStrain" class="form-label">Strain / Product Name <span class="text-danger">*</span></label>
+              <input type="text" id="inputStrain" class="form-control" required />
+            </div>
+            <div class="col-md-3">
+              <label for="inputCompany" class="form-label">Company / Store</label>
+              <input type="text" id="inputCompany" class="form-control" placeholder="Where you bought it" />
+            </div>
+            <div class="col-md-3">
+              <!-- NOTE: keep id/name and data binding the same to preserve functionality -->
+              <label for="inputMethod" class="form-label">Product <span class="text-danger">*</span></label>
+              <select id="inputMethod" class="form-select" required>
+                <!-- Flower & Pre-rolls -->
+                <option value="Flower">Flower</option>
+                <option value="THCa Flower">THCa Flower</option>
+                <option value="Pre-Roll">Pre-Roll</option>
+                <option value="Infused Pre-Roll">Infused Pre-Roll</option>
+                <option value="Kief">Kief</option>
+
+                <!-- Hash & Rosin/Resin -->
+                <option value="Hash">Hash</option>
+                <option value="Water Hash / Bubble Hash">Water Hash / Bubble Hash</option>
+                <option value="Dry Sift">Dry Sift</option>
+                <option value="Hash Rosin">Hash Rosin</option>
+                <option value="Flower Rosin">Flower Rosin</option>
+                <option value="Live Rosin">Live Rosin</option>
+                <option value="Live Resin">Live Resin</option>
+                <option value="Resin">Resin</option>
+                <option value="Distillate">Distillate</option>
+                <option value="Shatter">Shatter</option>
+                <option value="Wax">Wax</option>
+                <option value="Budder">Budder</option>
+                <option value="Crumble">Crumble</option>
+                <option value="Diamonds">Diamonds</option>
+                <option value="Sauce">Sauce</option>
+                <option value="THCa Diamonds">THCa Diamonds</option>
+
+                <!-- Vapes -->
+                <option value="Vape Cartridge (510)">Vape Cartridge (510)</option>
+                <option value="Disposable (All-in-One)">Disposable (All-in-One)</option>
+                <option value="Pod System">Pod System</option>
+
+                <!-- Edibles & Ingestibles -->
+                <option value="Gummy Edibles">Gummy Edibles</option>
+                <option value="Chocolate Edibles">Chocolate Edibles</option>
+                <option value="Baked Edibles">Baked Edibles</option>
+                <option value="Hard Candy / Lozenges">Hard Candy / Lozenges</option>
+                <option value="Mints">Mints</option>
+                <option value="Beverage / Drink">Beverage / Drink</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Tincture">Tincture</option>
+                <option value="RSO / FECO">RSO / FECO</option>
+                <option value="Capsules / Softgels">Capsules / Softgels</option>
+                <option value="Sublingual Strip">Sublingual Strip</option>
+                <option value="Tea / Infusion">Tea / Infusion</option>
+
+                <!-- Topicals & Patches -->
+                <option value="Topical Cream / Lotion">Topical Cream / Lotion</option>
+                <option value="Balm / Salve">Balm / Salve</option>
+                <option value="Transdermal Patch">Transdermal Patch</option>
+                <option value="Bath Soak / Salts">Bath Soak / Salts</option>
+
+                <!-- Other / Devices -->
+                <option value="Inhaler">Inhaler</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3">
+              <label for="inputDate" class="form-label">Date <span class="text-danger">*</span></label>
+              <input type="date" id="inputDate" class="form-control" required />
+            </div>
+            <div class="col-md-9">
+              <label for="onePuff" class="form-label d-flex justify-content-between align-items-center">
+                <span>One Puff Rating</span>
+                <span class="mono">
+                  <span id="ratingValue">5.0</span> / 10
+                </span>
+              </label>
+              <input id="onePuff" type="range" class="slider" min="1" max="10" step="0.1" value="5.0" />
+              <div class="form-text">Drag to set your rating (starts at 5.0).</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="inputNotes" class="form-label">Notes</label>
+            <textarea id="inputNotes" class="form-control" rows="3" placeholder="Effects, relief, side effects, context…"></textarea>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" id="submitBtn" class="btn btn-success">Add Entry</button>
+            <button type="button" id="cancelBtn" class="btn btn-outline-secondary d-none" onclick="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ENTRIES PANEL -->
+    <section class="panel">
+      <div class="panel-header">
+        <h4 class="mb-0">Journal Entries</h4>
+        <div class="position-relative search-wrap">
+          <span class="search-icon">🔎</span>
+          <input id="searchInput" type="text" class="form-control" placeholder="Search entries…" />
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table align-middle" id="entriesTable">
+            <thead class="table-light">
+              <tr>
+                <th class="sortable" data-sort="date">Date <span class="sort-indicator">⇵</span></th>
+                <th class="sortable" data-sort="strain">Strain/Product <span class="sort-indicator">⇵</span></th>
+                <th class="sortable" data-sort="company">Company <span class="sort-indicator">⇵</span></th>
+                <th class="sortable" data-sort="method">Product <span class="sort-indicator">⇵</span></th>
+                <th class="sortable" data-sort="rating">One Puff Rating <span class="sort-indicator">⇵</span></th>
+                <th>Notes</th>
+                <th style="width:140px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="entriesTableBody"></tbody>
+          </table>
+        </div>
+        <p id="noEntriesMsg" class="subtle mb-0"></p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    let entries = [];
+    let editingIndex = null;
+
+    // Sorting & filtering state
+    let sortKey = 'date';
+    let sortDir = 'desc'; // 'asc' | 'desc'
+    let searchQuery = '';
+
+    function esc(str){ if(!str) return ""; return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+
+    // Load stored
+    try {
+      const stored = localStorage.getItem('cannaEntries');
+      entries = stored ? JSON.parse(stored) : [];
+    } catch(e){ entries = []; }
+
+    // Init date to today
+    (function(){
+      const dateInput = document.getElementById('inputDate');
+      const today = new Date();
+      const local = new Date(today.getTime() - today.getTimezoneOffset()*60000);
+      dateInput.value = local.toISOString().split('T')[0];
+    })();
+
+    // Slider live value + exact filled track
+    const slider = document.getElementById('onePuff');
+    const ratingValue = document.getElementById('ratingValue');
+
+    function setSliderFill(el){
+      const min = parseFloat(el.min) || 0;
+      const max = parseFloat(el.max) || 100;
+      const val = Math.min(max, Math.max(min, parseFloat(el.value)||0));
+      const pct = ((val - min) / (max - min)) * 100;
+      el.style.backgroundSize = pct + "% 100%";
+    }
+
+    function setRatingValue(v){
+      const n = Math.min(10, Math.max(1, parseFloat(v)||5));
+      ratingValue.textContent = n.toFixed(1);
+      setSliderFill(slider);
+    }
+    setRatingValue(slider.value);
+    slider.addEventListener('input', e => setRatingValue(e.target.value));
+
+    // Leaf rating HTML
+    function ratingLeafHtml(rating){
+      const pct = Math.round((rating/10)*1000)/10; // one decimal percent
+      return `<div class="leaf-rating"><div class="leaf-rating-full" style="width:${pct}%"></div></div><span class="mono">${Number(rating).toFixed(1)}</span>`;
+    }
+
+    // Filter + sort helpers
+    function filteredAndSortedEntries(){
+      const q = searchQuery.trim().toLowerCase();
+      let list = entries.slice();
+
+      if(q){
+        list = list.filter(e => {
+          return (e.date||'').toLowerCase().includes(q)
+            || (e.strain||'').toLowerCase().includes(q)
+            || (e.company||'').toLowerCase().includes(q)
+            || (e.method||'').toLowerCase().includes(q)
+            || (e.notes||'').toLowerCase().includes(q);
+        });
+      }
+
+      list.sort((a,b) => {
+        let va, vb;
+        switch (sortKey){
+          case 'date':   va = a.timestamp || Date.parse(a.date)||0; vb = b.timestamp || Date.parse(b.date)||0; break;
+          case 'strain': va = (a.strain||'').toLowerCase(); vb = (b.strain||'').toLowerCase(); break;
+          case 'company':va = (a.company||'').toLowerCase(); vb = (b.company||'').toLowerCase(); break;
+          case 'method': va = (a.method||'').toLowerCase(); vb = (b.method||'').toLowerCase(); break;
+          case 'rating': va = Number(a.rating)||0; vb = Number(b.rating)||0; break;
+          default:       va = 0; vb = 0;
+        }
+        if(va < vb) return sortDir === 'asc' ? -1 : 1;
+        if(va > vb) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      return list;
+    }
+
+    function refreshEntriesTable(){
+      const tbody = document.getElementById('entriesTableBody');
+      const noMsg = document.getElementById('noEntriesMsg');
+      const list = filteredAndSortedEntries();
+
+      if(!list.length){
+        tbody.innerHTML = "";
+        noMsg.textContent = "No entries yet.";
+        return;
+      }
+      noMsg.textContent = "";
+
+      let html = "";
+      list.forEach((e, i) => {
+        const notesHtml = esc(e.notes).replace(/\n/g, "<br>");
+        html += `<tr>
+          <td>${esc(e.date)}</td>
+          <td>${esc(e.strain)}</td>
+          <td>${esc(e.company||'')}</td>
+          <td>${esc(e.method)}</td>
+          <td>${ratingLeafHtml(e.rating)}</td>
+          <td>${notesHtml}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${entries.indexOf(e)})">Edit</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${entries.indexOf(e)})">Delete</button>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+    refreshEntriesTable();
+
+    // Header sorting
+    document.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.getAttribute('data-sort');
+        if(sortKey === key){
+          sortDir = (sortDir === 'asc') ? 'desc' : 'asc';
+        } else {
+          sortKey = key;
+          sortDir = (key === 'date' || key === 'rating') ? 'desc' : 'asc';
+        }
+        refreshEntriesTable();
+      });
+    });
+
+    // Live search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value || '';
+      refreshEntriesTable();
+    });
+
+    function submitEntry(){
+      const strain = document.getElementById('inputStrain').value.trim();
+      const company = document.getElementById('inputCompany').value.trim();
+      const method = document.getElementById('inputMethod').value; // keeps same data key
+      const date = document.getElementById('inputDate').value;
+      const rating = parseFloat(slider.value.toString());
+      const notes = document.getElementById('inputNotes').value.trim();
+      let ts = Date.parse(date); if(isNaN(ts)) ts = Date.now();
+
+      if(editingIndex === null){
+        entries.push({ strain, company, method, date, rating, notes, timestamp: ts });
+      } else {
+        entries[editingIndex] = { strain, company, method, date, rating, notes, timestamp: ts };
+      }
+      localStorage.setItem('cannaEntries', JSON.stringify(entries));
+      refreshEntriesTable();
+      // reset form
+      document.getElementById('inputStrain').value = "";
+      document.getElementById('inputCompany').value = "";
+      document.getElementById('inputMethod').value = "Flower";
+      const today = new Date();
+      const local = new Date(today.getTime() - today.getTimezoneOffset()*60000);
+      document.getElementById('inputDate').value = local.toISOString().split('T')[0];
+      slider.value = "5.0"; setRatingValue("5.0");
+      document.getElementById('inputNotes').value = "";
+      document.getElementById('submitBtn').textContent = "Add Entry";
+      document.getElementById('cancelBtn').classList.add('d-none');
+      editingIndex = null;
+    }
+
+    function editEntry(index){
+      const e = entries[index];
+      editingIndex = index;
+      document.getElementById('inputStrain').value = e.strain || "";
+      document.getElementById('inputCompany').value = e.company || "";
+      document.getElementById('inputMethod').value = e.method || "Flower";
+      document.getElementById('inputDate').value = e.date || "";
+      slider.value = Number(e.rating||5).toFixed(1); setRatingValue(e.rating||5);
+      document.getElementById('inputNotes').value = e.notes || "";
+      document.getElementById('submitBtn').textContent = "Update Entry";
+      document.getElementById('cancelBtn').classList.remove('d-none');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteEntry(index){
+      if(!confirm("Delete this entry?")) return;
+      entries.splice(index,1);
+      if(editingIndex !== null){
+        if(index === editingIndex){ cancelEdit(); }
+        else if(index < editingIndex){ editingIndex--; }
+      }
+      localStorage.setItem('cannaEntries', JSON.stringify(entries));
+      refreshEntriesTable();
+    }
+
+    function cancelEdit(){
+      document.getElementById('inputStrain').value = "";
+      document.getElementById('inputCompany').value = "";
+      document.getElementById('inputMethod').value = "Flower";
+      const today = new Date();
+      const local = new Date(today.getTime() - today.getTimezoneOffset()*60000);
+      document.getElementById('inputDate').value = local.toISOString().split('T')[0];
+      slider.value = "5.0"; setRatingValue("5.0");
+      document.getElementById('inputNotes').value = "";
+      editingIndex = null;
+      document.getElementById('submitBtn').textContent = "Add Entry";
+      document.getElementById('cancelBtn').classList.add('d-none');
+    }
+  </script>
+</body>
+</html>
