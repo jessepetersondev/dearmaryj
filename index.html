@@ -719,6 +719,8 @@
         (async () => {
           const ok = await dmjValidateSession(sid);
           if (ok) {
+            // Mark a short-lived 'just unlocked' flag to prevent immediate restore prompt on refresh
+            try { sessionStorage.setItem('dmj_just_unlocked', String(Date.now())); } catch {}
             const url = new URL(window.location.href);
             url.searchParams.delete('session_id');
             window.history.replaceState(null, '', url.toString());
@@ -729,8 +731,22 @@
         })();
       } else {
         document.addEventListener('DOMContentLoaded', async () => {
+          // If user *just* unlocked (within last 5 min), start by hiding overlay until server confirms
+          let fresh = false;
+          try {
+            const ts = Number(sessionStorage.getItem('dmj_just_unlocked') || 0);
+            fresh = ts && (Date.now() - ts < 5 * 60 * 1000);
+          } catch {}
+          if (fresh) showOverlay(false);
+
           const st = await dmjAuthStatus();
-          showOverlay(!st.unlocked);
+
+          if (st.unlocked) {
+            showOverlay(false);
+            try { sessionStorage.removeItem('dmj_just_unlocked'); } catch {}
+          } else {
+            showOverlay(!fresh);
+          }
         });
       }
     })();
