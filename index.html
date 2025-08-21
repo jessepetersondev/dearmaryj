@@ -4,22 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Dear Mary J — Private Cannabis Journal with One Puff Rating (1.0–10.0)</title>
-  <meta name="description" content="Dear Mary J is A private cannabis journal. Track products, remember favorites, and rate them with the One Puff Rating (1.0–10.0). One-time unlock: $4.20." />
+  <title>Dear Mary J — Private Cannabis Journal with One Puff Rating (0.0–10.0)</title>
+  <meta name="description" content="Dear Mary J is A private cannabis journal. Track products, remember favorites, and rate them with the One Puff Rating (0.0–10.0). One-time unlock: $4.20." />
   <link rel="canonical" href="https://dearmaryj.com/" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Dear Mary J" />
   <meta property="og:title" content="Dear Mary J — Private Cannabis Journal (One Puff Rating)" />
-  <meta property="og:description" content="Track products, remember what you loved, and rate with the One Puff Rating (1.0–10.0). Private & local-first. One-time unlock: $4.20." />
+  <meta property="og:description" content="Track products, remember what you loved, and rate with the One Puff Rating (0.0–10.0). Private & local-first. One-time unlock: $4.20." />
   <meta property="og:url" content="https://dearmaryj.com/" />
   <meta property="og:image" content="https://dearmaryj.com/social/og-1200x630.png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Dear Mary J — Private Cannabis Journal" />
-  <meta name="twitter:description" content="A private cannabis journal with the One Puff Rating (1.0–10.0). One-time unlock: $4.20." />
+  <meta name="twitter:description" content="A private cannabis journal with the One Puff Rating (0.0–10.0). One-time unlock: $4.20." />
   <meta name="twitter:image" content="https://dearmaryj.com/social/twitter-1500x500.png" />
 
   <!-- PWA / Icons -->
@@ -270,7 +270,7 @@
               <img src="logos/logo-square.svg" alt="Dear Mary J" style="height:56px;width:56px;border-radius:12px;border:1px solid var(--stroke);background:var(--panel);padding:6px" onerror="this.style.display='none'">
               <div>
                 <h2 class="dmj-title">Unlock Dear Mary J</h2>
-                <p class="dmj-sub">A private cannabis journal. Track products and rate them with the <strong>One Puff Rating</strong> (1.0–10.0). One-time unlock: <span class="dmj-price">$4.20</span>.</p>
+                <p class="dmj-sub">A private cannabis journal. Track products and rate them with the <strong>One Puff Rating</strong> (0.0–10.0). One-time unlock: <span class="dmj-price">$4.20</span>.</p>
               </div>
             </div>
 
@@ -315,7 +315,7 @@
         </div>
         <div>
           <h1><span class="hero-badge" aria-hidden="true">JOURNAL</span></h1>
-          <p class="subtle">Track products & rate them with the <strong>One Puff Rating</strong> <span class="text-success">(1.0–10.0)</span>.</p>
+          <p class="subtle">Track products & rate them with the <strong>One Puff Rating</strong> <span class="text-success">(0.0–10.0)</span>.</p>
         </div>
       </div>
     </section>
@@ -401,7 +401,7 @@
                 <span>One Puff Rating</span>
                 <span class="mono"><span id="ratingValue">5.0</span> / 10</span>
               </label>
-              <input id="onePuff" type="range" class="slider" min="1" max="10" step="0.1" value="5.0" />
+              <input id="onePuff" type="range" class="slider" min="0" max="10" step="0.1" value="5.0" />
               <div class="form-text">Drag to set your rating (starts at 5.0).</div>
             </div>
           </div>
@@ -493,7 +493,7 @@
       el.style.backgroundSize = pct + "% 100%";
     }
     function setRatingValue(v){
-      const n = Math.min(10, Math.max(1, parseFloat(v)||5));
+      const n = Math.min(10, Math.max(0, parseFloat(v)||5)); /* allow 0.0–10.0 */
       ratingValue.textContent = n.toFixed(1);
       setSliderFill(slider);
     }
