@@ -33,7 +33,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous">
 
-  <!-- Brand tokens (optional but harmless if not present) -->
+  <!-- Brand tokens (optional) -->
   <link rel="stylesheet" href="brand/brand.css">
   <link rel="icon" href="/icons/favicon.ico">
   <link rel="apple-touch-icon" href="/icons/icon-180.png">
@@ -235,8 +235,6 @@
     .dmj-note { color: var(--muted); font-size: 13px; margin-top: 10px; text-align:center; }
     .dmj-spinner { width: 26px; height: 26px; border: 3px solid rgba(255,255,255,.25); border-top-color: var(--accent); border-radius:50%; animation: dmjspin 1s linear infinite; }
     @keyframes dmjspin { to { transform: rotate(360deg); } }
-
-    /* Paywall new layout */
     .dmj-grid { display:grid; grid-template-columns: 1.15fr .85fr; gap: 20px; align-items: center; }
     .dmj-screenshot {
       border-radius: 14px; border: 1px solid var(--stroke);
@@ -255,16 +253,36 @@
       .leaf-rating-full { height: 18px; background-size: 18px 18px; }
       .brand-logo { height: 40px; }
     }
+
+    /* Mobile: card view for entries table (≤640px) */
+    @media (max-width: 640px){
+      .table-responsive{overflow: visible;}
+      #entriesTable thead{display:none;}
+      #entriesTable, #entriesTable tbody, #entriesTable tr, #entriesTable td{display:block;width:100%;}
+      #entriesTable tr{
+        background: linear-gradient(180deg, var(--panel), var(--panel-2));
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        padding:8px 10px;
+        margin-bottom:10px;
+      }
+      #entriesTable td{border:none !important; padding:8px 10px;}
+      #entriesTable td[data-label]::before{
+        content:attr(data-label);
+        display:block; font-weight:600; color:var(--muted); margin-bottom:4px;
+      }
+      #entriesTable td:last-child{display:flex; gap:8px; justify-content:flex-end; padding-top:6px;}
+      .search-wrap{width:100%;}
+    }
   </style>
 </head>
 <body>
   <div class="app-shell">
 
-    <!-- PAYWALL OVERLAY (additive; blocks UI until unlocked) -->
+    <!-- PAYWALL OVERLAY -->
     <div id="dmjPaywallOverlay" role="dialog" aria-modal="true" aria-label="Unlock Dear Mary J">
       <div id="dmjPaywallCard">
         <div class="dmj-grid">
-          <!-- Left: copy -->
           <div>
             <div class="dmj-flex">
               <img src="logos/logo-square.svg" alt="Dear Mary J" style="height:56px;width:56px;border-radius:12px;border:1px solid var(--stroke);background:var(--panel);padding:6px" onerror="this.style.display='none'">
@@ -298,9 +316,7 @@
             <p class="dmj-note">After purchase you’ll be redirected back here and we’ll unlock the app automatically.</p>
           </div>
 
-          <!-- Right: screenshot (you attached this) -->
           <div>
-            <!-- Place your uploaded screenshot at /assets/paywall-overlay-preview.jpg -->
             <img class="dmj-screenshot" src="assets/paywall-overlay-preview.jpg" alt="Dear Mary J app preview" onerror="this.style.display='none'">
           </div>
         </div>
@@ -309,7 +325,7 @@
 
     <!-- HERO -->
     <section class="hero mb-4">
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap:3">
         <div class="brand-left">
           <img class="brand-logo" src="logos/logo-horizontal.svg" alt="Dear Mary J logo" onerror="this.src='logos/logo-horizontal.png'; this.onerror=null;">
         </div>
@@ -320,7 +336,7 @@
       </div>
     </section>
 
-    <!-- FORM PANEL (unchanged functionality) -->
+    <!-- FORM PANEL -->
     <section class="panel mb-4">
       <div class="panel-header">
         <h4>Add a New Entry</h4>
@@ -419,13 +435,20 @@
       </div>
     </section>
 
-    <!-- ENTRIES PANEL (unchanged functionality) -->
+    <!-- ENTRIES PANEL -->
     <section class="panel">
       <div class="panel-header">
         <h4 class="mb-0">Journal Entries</h4>
-        <div class="position-relative search-wrap">
-          <span class="search-icon">🔎</span>
-          <input id="searchInput" type="text" class="form-control" placeholder="Search entries…" />
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <div class="position-relative search-wrap">
+            <span class="search-icon">🔎</span>
+            <input id="searchInput" type="text" class="form-control" placeholder="Search entries…" />
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button id="exportBtn" type="button" class="btn btn-sm btn-outline-secondary">Export JSON</button>
+            <label for="importFile" class="btn btn-sm btn-outline-secondary mb-0">Import JSON</label>
+            <input id="importFile" type="file" accept="application/json" hidden />
+          </div>
         </div>
       </div>
       <div class="panel-body">
@@ -461,11 +484,10 @@
   </div>
 
   <script>
-    //const DMJ_API_BASE = "https://api.dearmaryj.com".replace(/\/$/, "");
     const DMJ_API_BASE = "https://api.dearmaryj.com";
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    /* ---------- APP (existing) ---------- */
+    /* ---------- APP ---------- */
     let entries = [];
     let editingIndex = null;
 
@@ -487,13 +509,14 @@
     const ratingValue = document.getElementById('ratingValue');
 
     function setSliderFill(el){
-      const min = parseFloat(el.min) || 0, max = parseFloat(el.max) || 100;
-      const val = Math.min(max, Math.max(min, parseFloat(el.value)||0));
+      const min = parseFloat(el.min) || 0, max = parseFloat(el.max) || 10;
+      const val = Math.min(max, Math.max(min, parseFloat(el.value)));
       const pct = ((val - min) / (max - min)) * 100;
-      el.style.backgroundSize = pct + "% 100%";
+      el.style.backgroundSize = Math.max(0, Math.min(100, pct)) + "% 100%";
     }
     function setRatingValue(v){
-      const n = Math.min(10, Math.max(0, parseFloat(v)||5)); /* allow 0.0–10.0 */
+      const raw = parseFloat(v);
+      const n = Number.isFinite(raw) ? Math.min(10, Math.max(0, raw)) : 5;
       ratingValue.textContent = n.toFixed(1);
       setSliderFill(slider);
     }
@@ -542,17 +565,18 @@
 
       let html = "";
       list.forEach((e) => {
+        const idx = entries.indexOf(e);
         const notesHtml = esc(e.notes).replace(/\n/g, "<br>");
         html += `<tr>
-          <td>${esc(e.date)}</td>
-          <td>${esc(e.strain)}</td>
-          <td>${esc(e.company||'')}</td>
-          <td>${esc(e.method)}</td>
-          <td>${ratingLeafHtml(e.rating)}</td>
-          <td>${notesHtml}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${entries.indexOf(e)})">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${entries.indexOf(e)})">Delete</button>
+          <td data-label="Date">${esc(e.date)}</td>
+          <td data-label="Name">${esc(e.strain)}</td>
+          <td data-label="Company">${esc(e.company||'')}</td>
+          <td data-label="Product">${esc(e.method)}</td>
+          <td data-label="One Puff Rating">${ratingLeafHtml(e.rating)}</td>
+          <td data-label="Notes">${notesHtml}</td>
+          <td data-label="Actions">
+            <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${idx})">Edit</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${idx})">Delete</button>
           </td>
         </tr>`;
       });
@@ -573,6 +597,56 @@
       searchQuery = e.target.value || '';
       refreshEntriesTable();
     });
+
+    // Export / Import JSON (backup/restore)
+    function exportEntries(){
+      try{
+        const payload = { version: 1, exportedAt: new Date().toISOString(), entries };
+        const data = JSON.stringify(payload, null, 2);
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const d = new Date();
+        const pad = (n)=>String(n).padStart(2,'0');
+        a.download = `dearmaryj-entries-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}.json`;
+        a.href = url; a.click();
+        URL.revokeObjectURL(url);
+      }catch(e){ alert('Export failed.'); }
+    }
+    function attachImportExport(){
+      const exp = document.getElementById('exportBtn');
+      const imp = document.getElementById('importFile');
+      if(exp) exp.addEventListener('click', exportEntries);
+      if(imp) imp.addEventListener('change', async (ev) => {
+        const file = ev.target.files && ev.target.files[0];
+        if(!file) return;
+        try{
+          const text = await file.text();
+          const json = JSON.parse(text);
+          const imported = Array.isArray(json) ? json : json.entries;
+          if(!Array.isArray(imported)) throw new Error('Invalid file format');
+          if(!confirm('Import will replace your current entries. Continue?')){ ev.target.value=''; return; }
+          const norm = imported.map(e => ({
+            strain: e.strain || e.name || '',
+            company: e.company || '',
+            method: e.method || e.product || 'Flower',
+            date: e.date || '',
+            rating: (typeof e.rating === 'number') ? e.rating : parseFloat(e.rating)||0,
+            notes: e.notes || '',
+            timestamp: e.timestamp || (Date.parse(e.date)||Date.now())
+          }));
+          entries = norm;
+          localStorage.setItem('cannaEntries', JSON.stringify(entries));
+          refreshEntriesTable();
+          alert('Import complete.');
+        }catch(err){
+          alert('Import failed: ' + (err && err.message ? err.message : 'Unknown error'));
+        }finally{
+          ev.target.value='';
+        }
+      });
+    }
+    document.addEventListener('DOMContentLoaded', attachImportExport);
 
     function submitEntry(){
       const strain = document.getElementById('inputStrain').value.trim();
@@ -607,7 +681,11 @@
       document.getElementById('inputCompany').value = e.company || "";
       document.getElementById('inputMethod').value = e.method || "Flower";
       document.getElementById('inputDate').value = e.date || "";
-      slider.value = Number(e.rating||5).toFixed(1); setRatingValue(e.rating||5);
+
+      // Preserve 0.0 ratings (avoid falsy default):
+      const r = (e.rating === 0 || typeof e.rating === 'number') ? Number(e.rating) : 5;
+      slider.value = r.toFixed(1); setRatingValue(r);
+
       document.getElementById('inputNotes').value = e.notes || "";
       document.getElementById('submitBtn').textContent = "Update Entry";
       document.getElementById('cancelBtn').classList.remove('d-none');
@@ -638,7 +716,7 @@
       document.getElementById('cancelBtn').classList.add('d-none');
     }
 
-    /* ---------- PAYWALL (existing flow kept) ---------- */
+    /* ---------- PAYWALL ---------- */
     async function dmjAuthStatus(){
       try {
         const r = await fetch(`${DMJ_API_BASE}/api/auth/status`, { credentials: 'include' });
