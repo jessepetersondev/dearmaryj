@@ -309,6 +309,45 @@
       #entriesTable td:last-child{display:flex; gap:8px; justify-content:flex-end; padding-top:6px;}
       .search-wrap{width:100%;}
     }
+
+    /* --- Grouping styles (new) --- */
+    .group-controls { display:flex; align-items:center; gap:8px; }
+    .group-select { min-width: 160px; }
+    .group-btn { padding:6px 10px; border-radius:10px; border:1px solid #253029; background:#0f1411; color:var(--text); font-weight:600; }
+    .group-btn:hover { background:#152019; }
+
+    .group-row {
+      background: rgba(43,213,118,.08);
+      border: 1px solid var(--stroke);
+      border-left: 3px solid var(--accent);
+      cursor: pointer;
+    }
+    .group-row:hover { background: rgba(43,213,118,.12); }
+    .group-cell {
+      font-weight: 700;
+      color: var(--text);
+    }
+    .group-meta {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    .collapse-indicator {
+      font-weight: 800;
+      margin-right: 8px;
+      color: var(--accent);
+    }
+
+    /* Mobile: group row looks like a card header */
+    @media (max-width: 640px){
+      .group-row {
+        border-radius: 12px;
+        padding: 10px !important;
+        margin-bottom: 8px;
+      }
+      .group-cell { display: flex; align-items: center; justify-content: space-between; }
+    }
   </style>
 </head>
 <body>
@@ -326,12 +365,6 @@
                 <p class="dmj-sub">A private cannabis journal. Track products and rate them with the <strong>One Puff Rating</strong> (0.0–10.0).</p>
               </div>
             </div>
-
-            <!-- <ul class="dmj-points">
-              <li>Remember what you loved (and what you didn’t)</li>
-              <li>Search & sort your entries instantly</li>
-              <li>Your journal stays in your browser — we don’t see it</li>
-            </ul> -->
 
             <div class="dmj-actions" style="margin-top:16px">
               <a class="dmj-btn" id="dmjUnlockBtn" href="#">Unlock Full Access — $4.20</a>
@@ -352,7 +385,6 @@
 
           <div>
             <img class="dmj-screenshot" src="assets/paywall-overlay-preview.jpg" alt="Dear Mary J app preview" onerror="this.style.display='none'">
-            <!-- <p class="dmj-note">After purchase you’ll be redirected back here and we’ll unlock the app automatically.</p> -->
           </div>
         </div>
       </div>
@@ -479,6 +511,20 @@
             <span class="search-icon">🔎</span>
             <input id="searchInput" type="text" class="form-control" placeholder="Search entries…" />
           </div>
+
+          <!-- NEW: grouping controls (additive) -->
+          <div class="group-controls">
+            <select id="groupBy" class="form-select form-select-sm group-select" title="Group by">
+              <option value="none">No Grouping</option>
+              <option value="date">Group by Date</option>
+              <option value="strain">Group by Name</option>
+              <option value="company">Group by Company</option>
+              <option value="method">Group by Product</option>
+            </select>
+            <button id="expandAll" class="group-btn" type="button">Expand All</button>
+            <button id="collapseAll" class="group-btn" type="button">Collapse All</button>
+          </div>
+
           <div class="d-flex gap-2 flex-wrap">
             <button id="exportBtn" type="button" class="btn btn-sm btn-outline-secondary">Export JSON</button>
             <label for="importFile" class="btn btn-sm btn-outline-secondary mb-0">Import JSON</label>
@@ -529,6 +575,7 @@
     let sortKey = 'date';
     let sortDir = 'desc';
     let searchQuery = '';
+    let groupBy = 'none'; // new
 
     function esc(str){ if(!str) return ""; return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
 
@@ -590,6 +637,53 @@
       return list;
     }
 
+    // NEW: grouping helpers
+    function groupKeyForEntry(e){
+      switch (groupBy){
+        case 'date':   return e.date || '(no date)';
+        case 'strain': return (e.strain || '(no name)').toLowerCase();
+        case 'company':return (e.company || '(no company)').toLowerCase();
+        case 'method': return (e.method || '(no product)').toLowerCase();
+        default:       return null;
+      }
+    }
+
+    function buildGroups(list){
+      if (groupBy === 'none') return null;
+      const map = new Map();
+      for (const item of list){
+        const k = groupKeyForEntry(item);
+        if (k == null) continue;
+        if (!map.has(k)) map.set(k, []);
+        map.get(k).push(item);
+      }
+      // sort groups by label asc
+      const groups = Array.from(map.entries()).map(([k, items]) => ({ key: k, items }));
+      groups.sort((a,b)=> a.key < b.key ? -1 : a.key > b.key ? 1 : 0);
+      return groups;
+    }
+
+    function groupHeaderRowHtml(groupLabel, items){
+      const count = items.length;
+      const avg = (items.reduce((s, it)=> s + (Number(it.rating)||0), 0) / count) || 0;
+      const niceLabel = groupLabel === groupLabel?.toLowerCase()
+        ? groupLabel.replace(/\b\w/g, c=>c.toUpperCase())
+        : groupLabel;
+      const gid = 'g_' + btoa(unescape(encodeURIComponent(groupLabel))).replace(/=/g,'');
+      return `
+        <tr class="group-row" data-group-id="${gid}" onclick="toggleGroup('${gid}')">
+          <td class="group-cell" colspan="7">
+            <span class="collapse-indicator" id="${gid}_icon">▸</span>
+            <span>${esc(niceLabel)}</span>
+            <span class="group-meta">• ${count} item${count>1?'s':''} • avg ${avg.toFixed(1)}</span>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Global expanded state per group id
+    const groupExpanded = {};
+
     function refreshEntriesTable(){
       const tbody = document.getElementById('entriesTableBody');
       const noMsg = document.getElementById('noEntriesMsg');
@@ -598,27 +692,64 @@
       if(!list.length){ tbody.innerHTML = ""; noMsg.textContent = "No entries yet."; return; }
       noMsg.textContent = "";
 
+      // If no grouping, render flat rows (original behavior)
+      if (groupBy === 'none'){
+        let html = "";
+        list.forEach((e) => {
+          const idx = entries.indexOf(e);
+          const notesHtml = esc(e.notes).replace(/\n/g, "<br>");
+          html += `<tr>
+            <td data-label="Date">${esc(e.date)}</td>
+            <td data-label="Name">${esc(e.strain)}</td>
+            <td data-label="Company">${esc(e.company||'')}</td>
+            <td data-label="Product">${esc(e.method)}</td>
+            <td data-label="One Puff Rating">${ratingLeafHtml(e.rating)}</td>
+            <td data-label="Notes">${notesHtml}</td>
+            <td data-label="Actions">
+              <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${idx})">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${idx})">Delete</button>
+            </td>
+          </tr>`;
+        });
+        tbody.innerHTML = html;
+        return;
+      }
+
+      // Grouped rendering
+      const groups = buildGroups(list);
       let html = "";
-      list.forEach((e) => {
-        const idx = entries.indexOf(e);
-        const notesHtml = esc(e.notes).replace(/\n/g, "<br>");
-        html += `<tr>
-          <td data-label="Date">${esc(e.date)}</td>
-          <td data-label="Name">${esc(e.strain)}</td>
-          <td data-label="Company">${esc(e.company||'')}</td>
-          <td data-label="Product">${esc(e.method)}</td>
-          <td data-label="One Puff Rating">${ratingLeafHtml(e.rating)}</td>
-          <td data-label="Notes">${notesHtml}</td>
-          <td data-label="Actions">
-            <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${idx})">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${idx})">Delete</button>
-          </td>
-        </tr>`;
+      groups.forEach(g => {
+        const gid = 'g_' + btoa(unescape(encodeURIComponent(g.key))).replace(/=/g,'');
+        const expanded = groupExpanded[gid] ?? false;
+        html += groupHeaderRowHtml(g.key, g.items);
+        g.items.forEach(e => {
+          const idx = entries.indexOf(e);
+          const notesHtml = esc(e.notes).replace(/\n/g, "<br>");
+          html += `<tr class="group-item" data-parent="${gid}" style="${expanded ? '' : 'display:none'}">
+            <td data-label="Date">${esc(e.date)}</td>
+            <td data-label="Name">${esc(e.strain)}</td>
+            <td data-label="Company">${esc(e.company||'')}</td>
+            <td data-label="Product">${esc(e.method)}</td>
+            <td data-label="One Puff Rating">${ratingLeafHtml(e.rating)}</td>
+            <td data-label="Notes">${notesHtml}</td>
+            <td data-label="Actions">
+              <button class="btn btn-sm btn-outline-secondary me-2" onclick="editEntry(${idx})">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${idx})">Delete</button>
+            </td>
+          </tr>`;
+        });
       });
       tbody.innerHTML = html;
+
+      // Update arrows
+      for (const gid in groupExpanded){
+        const icon = document.getElementById(`${gid}_icon`);
+        if (icon) icon.textContent = groupExpanded[gid] ? '▾' : '▸';
+      }
     }
     refreshEntriesTable();
 
+    // Sorting (unchanged)
     document.querySelectorAll('th.sortable').forEach(th => {
       th.addEventListener('click', () => {
         const key = th.getAttribute('data-sort');
@@ -628,12 +759,13 @@
       });
     });
 
+    // Search (unchanged)
     document.getElementById('searchInput').addEventListener('input', (e) => {
       searchQuery = e.target.value || '';
       refreshEntriesTable();
     });
 
-    // Export / Import JSON (backup/restore)
+    // Export / Import JSON (unchanged)
     function exportEntries(){
       try{
         const payload = { version: 1, exportedAt: new Date().toISOString(), entries };
@@ -683,6 +815,7 @@
     }
     document.addEventListener('DOMContentLoaded', attachImportExport);
 
+    // Form handlers (unchanged)
     function submitEntry(){
       const strain = document.getElementById('inputStrain').value.trim();
       const company = document.getElementById('inputCompany').value.trim();
@@ -717,7 +850,7 @@
       document.getElementById('inputMethod').value = e.method || "Flower";
       document.getElementById('inputDate').value = e.date || "";
 
-      // Preserve 0.0 ratings (avoid falsy default):
+      // Preserve 0.0 ratings
       const r = (e.rating === 0 || typeof e.rating === 'number') ? Number(e.rating) : 5;
       slider.value = r.toFixed(1); setRatingValue(r);
 
@@ -750,6 +883,42 @@
       document.getElementById('submitBtn').textContent = "Add Entry";
       document.getElementById('cancelBtn').classList.add('d-none');
     }
+
+    // --- Grouping interactions (new) ---
+    document.getElementById('groupBy').addEventListener('change', (e) => {
+      groupBy = e.target.value || 'none';
+      // Reset expanded state on mode change
+      for (const k in groupExpanded) delete groupExpanded[k];
+      refreshEntriesTable();
+    });
+
+    window.toggleGroup = function(gid){
+      groupExpanded[gid] = !groupExpanded[gid];
+      const rows = document.querySelectorAll(`tr.group-item[data-parent="${gid}"]`);
+      rows.forEach(r => r.style.display = groupExpanded[gid] ? '' : 'none');
+      const icon = document.getElementById(`${gid}_icon`);
+      if (icon) icon.textContent = groupExpanded[gid] ? '▾' : '▸';
+    };
+
+    document.getElementById('expandAll').addEventListener('click', () => {
+      const groups = document.querySelectorAll('tr.group-row');
+      groups.forEach(gr => {
+        const gid = gr.getAttribute('data-group-id');
+        groupExpanded[gid] = true;
+      });
+      document.querySelectorAll('tr.group-item').forEach(r => r.style.display = '');
+      document.querySelectorAll('.collapse-indicator').forEach(i => i.textContent = '▾');
+    });
+
+    document.getElementById('collapseAll').addEventListener('click', () => {
+      const groups = document.querySelectorAll('tr.group-row');
+      groups.forEach(gr => {
+        const gid = gr.getAttribute('data-group-id');
+        groupExpanded[gid] = false;
+      });
+      document.querySelectorAll('tr.group-item').forEach(r => r.style.display = 'none');
+      document.querySelectorAll('.collapse-indicator').forEach(i => i.textContent = '▸');
+    });
 
     /* ---------- PAYWALL ---------- */
     async function dmjAuthStatus(){
