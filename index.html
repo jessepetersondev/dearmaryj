@@ -927,13 +927,13 @@
         return await r.json();
       } catch { return { unlocked: false }; }
     }
-    async function dmjValidateSession(sessionId){
+    async function dmjValidateInvoice(invoiceId){
       try {
-        const r = await fetch(`${DMJ_API_BASE}/api/validate-session`, {
+        const r = await fetch(`${DMJ_API_BASE}/api/validate-invoice`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ session_id: sessionId })
+          body: JSON.stringify({ invoice_id: invoiceId })
         });
         if (!r.ok) return false;
         const data = await r.json(); return !!data.unlocked;
@@ -942,7 +942,7 @@
 
     (function initPaywall(){
       const params = new URLSearchParams(window.location.search);
-      const sid = params.get('session_id');
+      const invoiceId = params.get('invoice_id');
 
       function showOverlay(on){
         const ov = document.getElementById('dmjPaywallOverlay');
@@ -951,9 +951,24 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         const unlock = document.getElementById('dmjUnlockBtn');
-        if (unlock) unlock.addEventListener('click', (e) => {
+        if (unlock) unlock.addEventListener('click', async (e) => {
           e.preventDefault();
-          window.location.href = `${DMJ_API_BASE}/api/pay`;
+          try {
+            const response = await fetch(`${DMJ_API_BASE}/api/pay`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ email: '' })
+            });
+            const data = await response.json();
+            if (data.checkoutUrl) {
+              window.location.href = data.checkoutUrl;
+            } else {
+              alert('Failed to create payment. Please try again.');
+            }
+          } catch (err) {
+            alert('Network error. Please try again.');
+          }
         });
 
         const showRestore = document.getElementById('dmjShowRestore');
@@ -990,18 +1005,18 @@
         });
       });
 
-      if (sid) {
+      if (invoiceId) {
         document.addEventListener('DOMContentLoaded', () => {
           const spin = document.getElementById('dmjPaywallSpinner');
           if (spin) spin.style.display = 'inline-block';
           showOverlay(true);
         });
         (async () => {
-          const ok = await dmjValidateSession(sid);
+          const ok = await dmjValidateInvoice(invoiceId);
           if (ok) {
             try { sessionStorage.setItem('dmj_just_unlocked', String(Date.now())); } catch {}
             const url = new URL(window.location.href);
-            url.searchParams.delete('session_id');
+            url.searchParams.delete('invoice_id');
             window.history.replaceState(null, '', url.toString());
             showOverlay(false);
           } else {
