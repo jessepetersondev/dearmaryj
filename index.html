@@ -951,8 +951,14 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         const unlock = document.getElementById('dmjUnlockBtn');
+        const spinner = document.getElementById('dmjPaywallSpinner');
+        
         if (unlock) unlock.addEventListener('click', async (e) => {
           e.preventDefault();
+          if (spinner) spinner.style.display = 'inline-block';
+          unlock.style.opacity = '0.6';
+          unlock.style.pointerEvents = 'none';
+          
           try {
             const response = await fetch(`${DMJ_API_BASE}/api/pay`, {
               method: 'POST',
@@ -961,13 +967,20 @@
               body: JSON.stringify({ email: '' })
             });
             const data = await response.json();
+            
             if (data.checkoutUrl) {
               window.location.href = data.checkoutUrl;
             } else {
-              alert('Failed to create payment. Please try again.');
+              if (spinner) spinner.style.display = 'none';
+              unlock.style.opacity = '1';
+              unlock.style.pointerEvents = 'auto';
+              alert(data.error || 'Failed to create payment. Please try again.');
             }
           } catch (err) {
-            alert('Network error. Please try again.');
+            if (spinner) spinner.style.display = 'none';
+            unlock.style.opacity = '1';
+            unlock.style.pointerEvents = 'auto';
+            alert('Network error. Please try again in a moment.');
           }
         });
 
